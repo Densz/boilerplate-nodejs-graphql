@@ -1,0 +1,24 @@
+{
+  "name": "boilerplate-nodejs-backend",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Densz/boilerplate-nodejs-backend.git"
+  },
+  "author": "Denis Zheng",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Densz/boilerplate-nodejs-backend/issues"
+  },
+  "homepage": "https://github.com/Densz/boilerplate-nodejs-backend#readme"
+}
