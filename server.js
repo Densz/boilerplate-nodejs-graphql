@@ -1,18 +1,14 @@
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
-const { typeDefs, resolvers } = require('./graphql/schema');
+const { typeDefs } = require('./graphql/schema');
+const { resolvers } = require('./graphql/resolvers');
+
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
-
-// TODO: Put it in the config folder instead of Here
-const configurations = {
-  production: { ssl: true, port: 443, hostname: 'localhost' },
-  development: { ssl: false, port: 8888, hostname: 'localhost' },
-};
-
-const environment = process.env.NODE_END || 'development';
-const config = configurations[environment];
+const config = require(process.env.NODE_ENV === 'production'
+  ? './config/config.prod'
+  : './config/config.dev').config;
 
 const apollo = new ApolloServer({ typeDefs, resolvers });
 
@@ -26,8 +22,8 @@ if (config.ssl) {
   // are secured.
   server = https.createServer(
     {
-      key: fs.readFileSync(`./ssl/${environment}/server.key`),
-      cert: fs.readFileSync(`./ssl/${environment}/server.crt`),
+      key: fs.readFileSync(`./ssl/${process.env.NODE_ENV}/server.key`),
+      cert: fs.readFileSync(`./ssl/${process.env.NODE_ENV}/server.crt`),
     },
     app
   );
