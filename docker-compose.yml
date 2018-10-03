@@ -1,0 +1,27 @@
+version: '3'
+services:
+
+  postgres:
+    image: 'postgres:latest'
+
+  redis:
+    image: 'redis:latest'
+    
+  node-app:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8888:8888"
+    volumes:
+      - /usr/app/node_modules # Try not to map node_modules
+      - .:/usr/app
+    environment:
+      - NODE_ENV=development
+      - REDIS_PORT=6379
+      - PGPORT=5432
+    command: npm run dev
+
+### COMMAND HELPERS
+# docker-compose up
+# docker-compose ps
