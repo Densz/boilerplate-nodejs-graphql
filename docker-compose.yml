@@ -1,12 +1,22 @@
 version: '3'
 services:
-
   postgres:
-    image: 'postgres:latest'
+    image: 'postgres:10'
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=boilerplate
+    volumes:
+      - ./postgres-data/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
-  redis:
+  redis-server:
     image: 'redis:latest'
-    
+    ports:
+      - "6379:6379"
+
   node-app:
     build: 
       context: .
@@ -18,10 +28,16 @@ services:
       - .:/usr/app
     environment:
       - NODE_ENV=development
-      - REDIS_PORT=6379
-      - PGPORT=5432
-    command: npm run dev
+      - POSTGRES_PASSWORD=root
+    restart: always
+    depends_on:
+      - postgres
+    command: ./wait-for.sh postgres -- npm run dev
 
 ### COMMAND HELPERS
-# docker-compose up
+# docker-compose up --build
 # docker-compose ps
+## Launch in background
+# docker-compose up -d
+## Kill docker compose services
+# docker-compose down

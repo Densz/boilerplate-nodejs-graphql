@@ -8,8 +8,10 @@ const config = require(process.env.NODE_ENV === 'production'
 	? './config/config.prod'
 	: './config/config.dev');
 
-const { typeDefs } = require('./graphql/schema');
-const { resolvers } = require('./graphql/resolvers');
+require('./app/initializers/03_sequelize');
+
+const { typeDefs } = require('./app/graphql/schema');
+const { resolvers } = require('./app/graphql/resolvers');
 
 class Server {
 	constructor() {

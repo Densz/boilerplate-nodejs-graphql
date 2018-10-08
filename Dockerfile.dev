@@ -5,8 +5,9 @@ FROM node:alpine
 WORKDIR /usr/app
 
 # Install dependencies first
+RUN apk add postgresql-client
 COPY ./package.json ./
-RUN npm install --quiet
+RUN npm install
 # Then copy paste all the files
 COPY ./ ./
 
@@ -19,3 +20,4 @@ CMD ["npm", "run", "dev"]
 
 # Create a new bash process inside the container and connect it to the terminal
 # docker attach <container_id>
+# docker exec -it <container-id> /bin/bash
