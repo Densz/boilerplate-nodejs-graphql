@@ -1,23 +1,16 @@
-# Base image
 FROM node:alpine
 
-# Workdir in the container
 WORKDIR /usr/app
 
-# Install dependencies first
 RUN apk add postgresql-client
 COPY ./package.json ./
 RUN npm install
-# Then copy paste all the files
 COPY ./ ./
 
-# Default command
 CMD ["npm", "run", "dev"]
 
 ### COMMAND HELPERS
 # docker build -t dzheng42/node-boilerplate -f Dockerfile.dev .
 # docker run -p 8888:8888 dzheng42/node-boilerplate
-
-# Create a new bash process inside the container and connect it to the terminal
 # docker attach <container_id>
 # docker exec -it <container-id> /bin/bash

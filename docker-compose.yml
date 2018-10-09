@@ -24,7 +24,7 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      - /usr/app/node_modules # Try not to map node_modules
+      - /usr/app/node_modules
       - .:/usr/app
     environment:
       - NODE_ENV=development
