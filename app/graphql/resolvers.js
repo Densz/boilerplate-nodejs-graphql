@@ -1,7 +1,14 @@
 // A map of functions which return data for the schema
 const resolvers = {
 	Query: {
-		hello: () => 'world',
+		author(args) {
+			return find(authors, { id: args.id });
+		},
+	},
+	Author: {
+		books(author) {
+			return filter(books, { author: author.name });
+		},
 	},
 };
 
