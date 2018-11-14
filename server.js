@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { ApolloServer } = require('apollo-server-express');
@@ -10,26 +11,31 @@ const config = require(process.env.NODE_ENV === 'production'
 
 require('./app/initializers/03_sequelize');
 
-const { typeDefs } = require('./app/graphql/schema');
-const { resolvers } = require('./app/graphql/resolvers');
+const { schema } = require('./app/graphql/schema');
+const { resolvers, users } = require('./app/graphql/resolvers');
 
 class Server {
 	constructor() {
 		this.app = express();
-		this.app.use(bodyParser.urlencoded({ extended: false }));
-		this.app.use(bodyParser.json());
-		this.apollo = new ApolloServer({ typeDefs, resolvers });
+		this.apollo = new ApolloServer({
+			typeDefs: schema,
+			resolvers,
+			context: {
+				me: users[1],
+			},
+		});
 		this.server = this.configServer();
 		this.router = express.Router();
-    
-		// this.pubSup();
 		this.initMiddlewares();
 		this.initRoutes();
 		this.start();
 	}
 
 	initMiddlewares() {
-		this.apollo.applyMiddleware({ app: this.app });
+		this.app.use(cors());
+		this.app.use(bodyParser.urlencoded({ extended: false }));
+		this.app.use(bodyParser.json());
+		this.apollo.applyMiddleware({ app: this.app, path: '/graphql' });
 		this.app.use(this.router);
 	}
 
@@ -51,12 +57,6 @@ class Server {
 		}
 		return server;
 	}
-
-	// pubSup() {
-	// 	// Add subscription support
-	// 	// https://github.com/davidyaha/graphql-redis-subscriptions
-	// 	this.apollo.installSubscriptionHandlers(this.server);
-	// }
 
 	initRoutes() {
 		this.router.get('/', (req, res) => {

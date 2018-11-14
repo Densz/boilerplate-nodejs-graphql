@@ -15,7 +15,7 @@
     "db_drop": "dropdb -p 5432 -h localhost -U root -i -e boilerplate",
     "db_create": "createdb -p 5432 -h localhost -U root -e boilerplate",
     "db_dump": "psql -h localhost -p 5432 -U root -e boilerplate < ./app/db/dump.sql",
-    "db_faker": "node faker.js"
+    "db_faker": "node ./app/db/faker.js"
   },
   "repository": {
     "type": "git",
@@ -38,11 +38,13 @@
     "apollo-server": "^2.1.0",
     "apollo-server-express": "^2.1.0",
     "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
     "express": "^4.16.3",
     "faker": "^4.1.0",
     "graphql": "^14.0.2",
     "pg": "^7.5.0",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^4.39.0"
+    "sequelize": "^4.39.0",
+    "uuid": "^3.3.2"
   }
 }
