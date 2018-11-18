@@ -1,41 +1,5 @@
 const uuidv4 = require('uuid/v4');
 
-let users = {
-	1: {
-		id: 1,
-		email: 'user1@yellow.fr',
-		messageIds: [1, 3, 4],
-	},
-	2: {
-		id: 2,
-		email: 'user2@yellow.fr',
-		messageIds: [2],
-	},
-};
-
-let messages = {
-	1: {
-		id: '1',
-		text: 'Hello world',
-		userId: 1,
-	},
-	2: {
-		id: '2',
-		text: 'Messages numero 2',
-		userId: 2,
-	},
-	3: {
-		id: '3',
-		text: 'Tres bien',
-		userId: 1,
-	},
-	4: {
-		id: '4',
-		text: 'Tres bien2',
-		userId: 1,
-	},
-};
-
 // A map of functions which return data for the schema
 const resolvers = {
 	Query: {
@@ -43,18 +7,18 @@ const resolvers = {
 		me: (parents, args, { me }) => {
 			return me;
 		},
-		user: (parent, { id }) => {
-			return users[id];
+		user: (parent, { id }, { models }) => {
+			return models.users[id];
 		},
-		users: () => {
-			return Object.values(users);
+		users: (parent, args, { models }) => {
+			return Object.values(models.users[id]);
 		},
 		// messages
-		message: (parent, { id }) => {
-			return messages[id];
+		message: (parent, { id }, { models }) => {
+			return models.messages[id];
 		},
-		messages: () => {
-			return Object.values(messages);
+		messages: (parent, args, { models }) => {
+			return Object.values(models.messages);
 		},
 	},
 
@@ -76,15 +40,15 @@ const resolvers = {
 	},
 
 	Mutation: {
-		createMessage: (parent, { text }, { me }) => {
+		createMessage: (parent, { text }, { me, models }) => {
 			const id = uuidv4();
 			const message = {
 				id,
 				text,
 				userId: me.id,
 			};
-			messages[id] = message;
-			users[me.id].messageIds.push(id);
+			models.messages[id] = message;
+			models.users[me.id].messageIds.push(id);
 			return message;
 		},
 		updateMessage: (parent, { text, id }, { me }) => {
@@ -94,13 +58,13 @@ const resolvers = {
 			};
 			return messages[id];
 		},
-		deleteMessage: (parent, { id }) => {
+		deleteMessage: (parent, { id }, { models }) => {
 			// eslint-disable-next-line
-			const { [id]: message, ...otherMessages } = messages;
+			const { [id]: message, ...otherMessages } = models.messages;
 			if (!message) {
 				return false;
 			}
-			messages = otherMessages;
+			models.messages = otherMessages;
 			return true;
 		},
 	},
@@ -108,5 +72,4 @@ const resolvers = {
 
 module.exports = {
 	resolvers,
-	users,
 };

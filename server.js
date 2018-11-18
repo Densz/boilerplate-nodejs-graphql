@@ -13,6 +13,7 @@ require('./app/initializers/03_sequelize');
 
 const { schema } = require('./app/graphql/schema');
 const { resolvers, users } = require('./app/graphql/resolvers');
+const models = require('./app/graphql/models');
 
 class Server {
 	constructor() {
@@ -21,7 +22,8 @@ class Server {
 			typeDefs: schema,
 			resolvers,
 			context: {
-				me: users[1],
+				models,
+				me: models.users[1],
 			},
 		});
 		this.server = this.configServer();
