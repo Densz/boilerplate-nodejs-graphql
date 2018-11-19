@@ -12,7 +12,7 @@ const config = require(process.env.NODE_ENV === 'production'
 require('./app/initializers/03_sequelize');
 
 const schema = require('./app/graphql/schema/');
-const { resolvers } = require('./app/graphql/resolvers');
+const resolvers = require('./app/graphql/resolvers/');
 const models = require('./app/graphql/models');
 
 class Server {

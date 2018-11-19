@@ -1,42 +1,13 @@
 const uuidv4 = require('uuid/v4');
 
-// A map of functions which return data for the schema
-const resolvers = {
+const messageResolvers = {
 	Query: {
-		// (parent, args, context, info) => { ... }
-		me: (parents, args, { me }) => {
-			return me;
-		},
-		user: (parent, { id }, { models }) => {
-			return models.users[id];
-		},
-		users: (parent, args, { models }) => {
-			console.log('models', models);
-			return Object.values(models.users);
-		},
 		// messages
 		message: (parent, { id }, { models }) => {
 			return models.messages[id];
 		},
 		messages: (parent, args, { models }) => {
 			return Object.values(models.messages);
-		},
-	},
-
-	User: {
-		email: user => {
-			return user.email;
-		},
-		messages: (user, args, { models }) => {
-			return Object.values(models.messages).filter(
-				message => message.userId === user.id
-			);
-		},
-	},
-
-	Message: {
-		user: (message, args, { models }) => {
-			return models.users[message.userId];
 		},
 	},
 
@@ -69,8 +40,12 @@ const resolvers = {
 			return true;
 		},
 	},
+
+	Message: {
+		user: (message, args, { models }) => {
+			return models.users[message.userId];
+		},
+	},
 };
 
-module.exports = {
-	resolvers,
-};
+module.exports = messageResolvers;
