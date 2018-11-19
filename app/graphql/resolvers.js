@@ -11,7 +11,8 @@ const resolvers = {
 			return models.users[id];
 		},
 		users: (parent, args, { models }) => {
-			return Object.values(models.users[id]);
+			console.log('models', models);
+			return Object.values(models.users);
 		},
 		// messages
 		message: (parent, { id }, { models }) => {
@@ -26,16 +27,16 @@ const resolvers = {
 		email: user => {
 			return user.email;
 		},
-		messages: user => {
-			return Object.values(messages).filter(
+		messages: (user, args, { models }) => {
+			return Object.values(models.messages).filter(
 				message => message.userId === user.id
 			);
 		},
 	},
 
 	Message: {
-		user: message => {
-			return users[message.userId];
+		user: (message, args, { models }) => {
+			return models.users[message.userId];
 		},
 	},
 
