@@ -23,13 +23,6 @@ const messageResolvers = {
 			models.users[me.id].messageIds.push(id);
 			return message;
 		},
-		updateMessage: (parent, { text, id }, { me }) => {
-			messages[id] = {
-				...messages[id],
-				text,
-			};
-			return messages[id];
-		},
 		deleteMessage: (parent, { id }, { models }) => {
 			// eslint-disable-next-line
 			const { [id]: message, ...otherMessages } = models.messages;
