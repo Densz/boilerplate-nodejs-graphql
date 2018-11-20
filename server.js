@@ -5,15 +5,16 @@ const { ApolloServer } = require('apollo-server-express');
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
-const config = require(process.env.NODE_ENV === 'production'
-	? './config/config.prod'
-	: './config/config.dev');
-
-require('./app/initializers/03_sequelize');
-
+const config = require('./config/');
 const schema = require('./app/graphql/schema/');
 const resolvers = require('./app/graphql/resolvers/');
-const models = require('./app/graphql/models');
+const {
+	sequelize,
+	models,
+	createUsersWithMessages,
+} = require('./app/graphql/models/');
+
+const eraseDatabaseOnSync = true; // FIXME:
 
 class Server {
 	constructor() {
@@ -21,10 +22,10 @@ class Server {
 		this.apollo = new ApolloServer({
 			typeDefs: schema,
 			resolvers,
-			context: {
+			context: async () => ({
 				models,
-				me: models.users[1],
-			},
+				me: await models.User.findByEmail('rwieruch@test.fr'),
+			}),
 		});
 		this.server = this.configServer();
 		this.router = express.Router();
@@ -67,13 +68,18 @@ class Server {
 	}
 
 	start() {
-		this.app.listen({ port: config.port }, () => {
-			console.log(
-				'🚀 Server ready at',
-				`http${config.ssl ? 's' : ''}://${config.hostname}:${config.port}${
-					this.apollo.graphqlPath
-				}`
-			);
+		sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
+			if (eraseDatabaseOnSync) {
+				createUsersWithMessages();
+			}
+			this.app.listen({ port: config.port }, () => {
+				console.log(
+					'🚀 Server ready at',
+					`http${config.ssl ? 's' : ''}://${config.hostname}:${config.port}${
+						this.apollo.graphqlPath
+					}`
+				);
+			});
 		});
 	}
 }
