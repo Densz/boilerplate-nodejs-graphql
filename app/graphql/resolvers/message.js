@@ -13,10 +13,14 @@ const messageResolvers = {
 
 	Mutation: {
 		createMessage: async (parent, { text }, { me, models }) => {
-			return await models.Message.create({
-				text,
-				userId: me.id,
-			});
+			try {
+				return await models.Message.create({
+					text,
+					userId: me.id,
+				});
+			} catch (err) {
+				throw new Error(err);
+			}
 		},
 		deleteMessage: async (parent, { id }, { models }) => {
 			return await models.Message.destroy({ where: { id } });
