@@ -21,7 +21,9 @@ Object.keys(models).forEach(key => {
 const createUsersWithMessages = async () => {
 	await models.User.create(
 		{
-			email: 'rwieruch@test.fr',
+			email: 'user@test.fr',
+			username: 'user',
+			password: 'yellowe',
 			messages: [
 				{
 					text: 'Published the Road to learn React',
@@ -35,6 +37,8 @@ const createUsersWithMessages = async () => {
 	await models.User.create(
 		{
 			email: 'ddavids@test.fr',
+			username: 'ddavids',
+			password: 'yellowe',
 			messages: [
 				{
 					text: 'Happy to release ...',

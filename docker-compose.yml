@@ -20,7 +20,7 @@ services:
   node-app:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     ports:
       - '8888:8888'
     volumes:
@@ -34,6 +34,7 @@ services:
       - postgres
     command: ./wait-for.sh postgres -- npm run dev
 ### COMMAND HELPERS
+## When there is a new package in the package.json
 # docker-compose up --build
 # docker-compose ps
 ## Launch in background

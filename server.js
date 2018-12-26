@@ -37,6 +37,7 @@ class Server {
 			context: async () => ({
 				models,
 				me: await models.User.findByEmail('rwieruch@test.fr'),
+				secret: config.secret,
 			}),
 		});
 		this.server = this.configServer();
