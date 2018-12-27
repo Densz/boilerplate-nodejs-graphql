@@ -7,8 +7,8 @@ const messageResolvers = {
 		message: async (parent, { id }, { models }) => {
 			return await models.Message.findById(id);
 		},
-		messages: async (parent, args, { models }) => {
-			return await models.Message.findAll();
+		messages: async (parent, { offset = 0, limit = 100 }, { models }) => {
+			return await models.Message.findAll({ offset, limit });
 		},
 	},
 

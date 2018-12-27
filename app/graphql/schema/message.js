@@ -2,7 +2,7 @@ const { gql } = require('apollo-server');
 
 const messageSchema = gql`
 	extend type Query {
-		messages: [Message!]
+		messages(offset: Int, limit: Int): [Message!]
 		message(id: ID!): Message!
 	}
 
@@ -14,6 +14,7 @@ const messageSchema = gql`
 	type Message {
 		id: ID!
 		text: String!
+		createdAt: Date!
 		userId: Int
 		user: User!
 	}

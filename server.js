@@ -15,7 +15,7 @@ const {
 	createUsersWithMessages,
 } = require('./app/graphql/models/');
 
-const eraseDatabaseOnSync = false; // FIXME: Reset database on save with nodemon
+const eraseDatabaseOnSync = true; // FIXME: Reset database on save with nodemon
 
 const getMe = async req => {
 	const token = req.headers['x-token'];
@@ -100,7 +100,7 @@ class Server {
 	start() {
 		sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
 			if (eraseDatabaseOnSync) {
-				createUsersWithMessages();
+				createUsersWithMessages(new Date());
 			}
 			this.app.listen({ port: config.port }, () => {
 				console.log(
