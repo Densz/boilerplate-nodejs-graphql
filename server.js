@@ -1,10 +1,11 @@
 const cors = require('cors');
 const express = require('express');
 const bodyParser = require('body-parser');
-const { ApolloServer } = require('apollo-server-express');
+const { ApolloServer, AuthenticationError } = require('apollo-server-express');
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
+const jwt = require('jsonwebtoken');
 const config = require('./config/');
 const schema = require('./app/graphql/schema/');
 const resolvers = require('./app/graphql/resolvers/');
@@ -14,7 +15,19 @@ const {
 	createUsersWithMessages,
 } = require('./app/graphql/models/');
 
-const eraseDatabaseOnSync = true; // FIXME:
+const eraseDatabaseOnSync = false; // FIXME: Reset database on save with nodemon
+
+const getMe = async req => {
+	const token = req.headers['x-token'];
+
+	if (token) {
+		try {
+			return await jwt.verify(token, config.secret);
+		} catch (e) {
+			throw new AuthenticationError('Your session expired. Sign in again');
+		}
+	}
+};
 
 class Server {
 	constructor() {
@@ -34,11 +47,15 @@ class Server {
 					message,
 				};
 			},
-			context: async () => ({
-				models,
-				me: await models.User.findByEmail('rwieruch@test.fr'),
-				secret: config.secret,
-			}),
+			context: async ({ req }) => {
+				const me = await getMe(req);
+
+				return {
+					models,
+					me,
+					secret: config.secret,
+				};
+			},
 		});
 		this.server = this.configServer();
 		this.router = express.Router();

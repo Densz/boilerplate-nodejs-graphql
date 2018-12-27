@@ -4,7 +4,7 @@ WORKDIR /usr/app
 
 RUN apk add postgresql-client
 COPY ./package.json ./
-RUN npm i -f
+RUN npm i
 COPY ./ ./
 
 CMD ["npm", "run", "dev"]
