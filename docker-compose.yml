@@ -12,10 +12,10 @@ services:
     ports:
       - '5432:5432'
 
-  redis-server:
-    image: 'redis:latest'
-    ports:
-      - '6379:6379'
+  # redis-server:
+  #   image: 'redis:latest'
+  #   ports:
+  #     - '6379:6379'
 
   node-app:
     build:
@@ -33,6 +33,34 @@ services:
     depends_on:
       - postgres
     command: ./wait-for.sh postgres -- npm run dev
+
+  postgres-test:
+    image: 'postgres:10'
+    restart: always
+    environment:
+      - POSTGRES_DB=mytestdatabase
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    ports:
+      - '5431:5432'
+
+  node-app-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    restart: always
+    ports:
+      - '8881:8888'
+    volumes:
+      - /app/node_modules
+      - .:/app
+    environment:
+      - NODE_ENV=development
+      - TEST_DATABASE=mytestdatabase
+      - POSTGRES_PASSWORD=root
+    depends_on:
+      - postgres-test
+    command: ./wait-for.test.sh postgres-test -- npm run test-server
 ### COMMAND HELPERS
 ## When there is a new package in the package.json
 # docker-compose up --build

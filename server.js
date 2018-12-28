@@ -15,7 +15,7 @@ const {
 	createUsersWithMessages,
 } = require('./app/graphql/models/');
 
-const eraseDatabaseOnSync = false; // FIXME: Reset database on save with nodemon
+const isTest = !!process.env.TEST_DATABASE;
 
 const getMe = async req => {
 	const token = req.headers['x-token'];
@@ -107,17 +107,27 @@ class Server {
 	}
 
 	start() {
-		sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
-			if (eraseDatabaseOnSync) {
+		sequelize.sync({ force: isTest }).then(async () => {
+			if (isTest) {
 				createUsersWithMessages(new Date());
 			}
 			this.httpServer.listen({ port: config.port }, () => {
-				console.log(
-					'🚀🚀🚀  ===> Server ready at',
-					`http${config.ssl ? 's' : ''}://${config.hostname}:${config.port}${
-						this.apolloServer.graphqlPath
-					} <=== 🚀🚀🚀`
-				);
+				if (isTest) {
+					// 8881 due to port mapping in docker-compose
+					console.log(
+						'🚀🚀🚀  [TEST] Server ready at',
+						`http${config.ssl ? 's' : ''}://${config.hostname}:8881${
+							this.apolloServer.graphqlPath
+						} <=== 🚀🚀🚀`
+					);
+				} else {
+					console.log(
+						'🚀🚀🚀  [DEV] Server ready at',
+						`http${config.ssl ? 's' : ''}://${config.hostname}:${config.port}${
+							this.apolloServer.graphqlPath
+						} <=== 🚀🚀🚀`
+					);
+				}
 			});
 		});
 	}

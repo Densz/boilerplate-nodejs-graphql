@@ -1,11 +1,15 @@
 const Sequelize = require('sequelize');
 const config = require('../../../config/');
 
-// TODO: Need to use config here
-const sequelize = new Sequelize('boilerplate', 'root', 'root', {
-	host: 'postgres',
-	dialect: 'postgres',
-});
+const sequelize = new Sequelize(
+	process.env.TEST_DATABASE || config.postgres.database,
+	config.postgres.username,
+	config.postgres.password,
+	{
+		host: process.env.TEST_DATABASE ? 'postgres-test' : 'postgres',
+		dialect: 'postgres',
+	}
+);
 
 const models = {
 	User: sequelize.import('./user'),
