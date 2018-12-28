@@ -15,7 +15,7 @@ const {
 	createUsersWithMessages,
 } = require('./app/graphql/models/');
 
-const eraseDatabaseOnSync = true; // FIXME: Reset database on save with nodemon
+const eraseDatabaseOnSync = false; // FIXME: Reset database on save with nodemon
 
 const getMe = async req => {
 	const token = req.headers['x-token'];
@@ -24,7 +24,7 @@ const getMe = async req => {
 		try {
 			return await jwt.verify(token, config.secret);
 		} catch (e) {
-			throw new AuthenticationError('Your session expired. Sign in again');
+			throw new AuthenticationError('Your session expired. Sign in again.');
 		}
 	}
 };
@@ -32,7 +32,7 @@ const getMe = async req => {
 class Server {
 	constructor() {
 		this.app = express();
-		this.apollo = new ApolloServer({
+		this.apolloServer = new ApolloServer({
 			typeDefs: schema,
 			resolvers,
 			formatError: error => {
@@ -47,17 +47,26 @@ class Server {
 					message,
 				};
 			},
-			context: async ({ req }) => {
-				const me = await getMe(req);
-
-				return {
-					models,
-					me,
-					secret: config.secret,
-				};
+			context: async ({ req, connection }) => {
+				// Handles subscriptions
+				if (connection) {
+					return {
+						models,
+					};
+				}
+				if (req) {
+					const me = await getMe(req);
+					return {
+						models,
+						me,
+						secret: config.secret,
+					};
+				}
 			},
 		});
-		this.server = this.configServer();
+		this.httpServer = this.configServer();
+		// init Subscriptions with GraphQL
+		this.apolloServer.installSubscriptionHandlers(this.httpServer);
 		this.router = express.Router();
 		this.initMiddlewares();
 		this.initRoutes();
@@ -68,7 +77,7 @@ class Server {
 		this.app.use(cors());
 		this.app.use(bodyParser.urlencoded({ extended: false }));
 		this.app.use(bodyParser.json());
-		this.apollo.applyMiddleware({ app: this.app, path: '/graphql' });
+		this.apolloServer.applyMiddleware({ app: this.app, path: '/graphql' });
 		this.app.use(this.router);
 	}
 
@@ -102,12 +111,12 @@ class Server {
 			if (eraseDatabaseOnSync) {
 				createUsersWithMessages(new Date());
 			}
-			this.app.listen({ port: config.port }, () => {
+			this.httpServer.listen({ port: config.port }, () => {
 				console.log(
-					'🚀 Server ready at',
+					'🚀🚀🚀  ===> Server ready at',
 					`http${config.ssl ? 's' : ''}://${config.hostname}:${config.port}${
-						this.apollo.graphqlPath
-					}`
+						this.apolloServer.graphqlPath
+					} <=== 🚀🚀🚀`
 				);
 			});
 		});

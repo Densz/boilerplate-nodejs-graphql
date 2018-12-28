@@ -11,6 +11,14 @@ const messageSchema = gql`
 		deleteMessage(id: ID!): Boolean!
 	}
 
+	extend type Subscription {
+		messageCreated: MessageCreated!
+	}
+
+	type MessageCreated {
+		message: Message!
+	}
+
 	type Message {
 		id: ID!
 		text: String!
