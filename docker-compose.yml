@@ -28,6 +28,8 @@ services:
       - .:/usr/app
     environment:
       - NODE_ENV=development
+      - POSTGRES_DB=boilerplate
+      - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
     restart: always
     depends_on:
@@ -56,11 +58,13 @@ services:
     environment:
       - NODE_ENV=development
       - TEST_DATABASE=mytestdatabase
+      - POSTGRES_DB=mytestdatabase
+      - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
     restart: always
     depends_on:
       - postgres-test
-    command: ./wait-for.test.sh postgres-test -- npm run test-server
+    command: ./wait-for.sh postgres-test -- npm run test-server
 ### COMMAND HELPERS
 ## When there is a new package in the package.json
 # docker-compose up --build
