@@ -42,8 +42,8 @@ const createUsersWithMessages = async date => {
 	);
 	await models.User.create(
 		{
-			email: 'ddavids@test.fr',
-			username: 'ddavids',
+			email: 'lambda@user.com',
+			username: 'lambda',
 			password: 'yellowe',
 			messages: [
 				{

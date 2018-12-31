@@ -30,4 +30,25 @@ describe('Users', () => {
 			expect(result.data).to.eql(expectedResult);
 		});
 	});
+
+	describe('deleteUser(id: String!): Boolean!', () => {
+		it('returns an error because only admins can delete a user', async () => {
+			const {
+				data: {
+					data: {
+						signIn: { token },
+					},
+				},
+			} = await userApi.signIn({
+				email: 'lambda@user.com',
+				password: 'yellowe',
+			});
+
+			const {
+				data: { errors },
+			} = await userApi.deleteUser({ id: '1' }, token);
+
+			expect(errors[0].message).to.eql('Not authorized as admin.');
+		});
+	});
 });

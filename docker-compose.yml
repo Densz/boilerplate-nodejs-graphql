@@ -44,20 +44,20 @@ services:
     ports:
       - '5431:5432'
 
-  node-app-tests:
+  node-app-test:
     build:
       context: .
-      dockerfile: Dockerfile.test
-    restart: always
+      dockerfile: Dockerfile
     ports:
       - '8881:8888'
     volumes:
-      - /app/node_modules
-      - .:/app
+      - /usr/app/node_modules
+      - .:/usr/app
     environment:
       - NODE_ENV=development
       - TEST_DATABASE=mytestdatabase
       - POSTGRES_PASSWORD=root
+    restart: always
     depends_on:
       - postgres-test
     command: ./wait-for.test.sh postgres-test -- npm run test-server
