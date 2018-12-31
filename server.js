@@ -9,6 +9,9 @@ const jwt = require('jsonwebtoken');
 const config = require('./config/');
 const schema = require('./app/graphql/schema/');
 const resolvers = require('./app/graphql/resolvers/');
+const DataLoader = require('dataloader');
+const loaders = require('./app/graphql/loaders/');
+
 const {
 	sequelize,
 	models,
@@ -52,6 +55,11 @@ class Server {
 				if (connection) {
 					return {
 						models,
+						loaders: {
+							user: new DataLoader(keys =>
+								loaders.user.batchUsers(keys, models)
+							),
+						},
 					};
 				}
 				if (req) {
@@ -60,6 +68,11 @@ class Server {
 						models,
 						me,
 						secret: config.secret,
+						loaders: {
+							user: new DataLoader(keys =>
+								loaders.user.batchUsers(keys, models)
+							),
+						},
 					};
 				}
 			},

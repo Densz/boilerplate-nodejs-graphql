@@ -44,6 +44,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
+    "dataloader": "^1.4.0",
     "express": "^4.16.3",
     "faker": "^4.1.0",
     "graphql": "^14.0.2",
