@@ -3,7 +3,7 @@ FROM node:alpine
 WORKDIR /usr/app
 
 RUN apk add postgresql-client
-COPY ./package.json ./
+COPY package.json ./
 RUN npm i
 COPY ./ ./
 

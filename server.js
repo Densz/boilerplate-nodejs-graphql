@@ -6,10 +6,12 @@ const fs = require('fs');
 const https = require('https');
 const http = require('http');
 const jwt = require('jsonwebtoken');
+const DataLoader = require('dataloader');
+
 const config = require('./config/');
+
 const schema = require('./app/graphql/schema/');
 const resolvers = require('./app/graphql/resolvers/');
-const DataLoader = require('dataloader');
 const loaders = require('./app/graphql/loaders/');
 
 const {
